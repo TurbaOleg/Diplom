@@ -51,7 +51,15 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	dc, err := sqlite.MakeDeleteCookie(db)
+	if err != nil {
+		return nil, err
+	}
 	sr, err := sqlite.MakeSetRule(db)
+	if err != nil {
+		return nil, err
+	}
+	sc, err := sqlite.MakeSetCookie(db)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +85,8 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	app.Get("/rule/:id", MakeGetRule(gr))
 	app.Post("/rule/:id", MakePostRule(sr))
 	app.Post("/rule/:id/delete", MakeDeleteRule(dr))
+	app.Post("/cookie/:id/delete", MakeDeleteCookie(dc, gc))
+	app.Post("/cookie/:id", MakePostCookie(sc))
 	return app, nil
 }
 
@@ -224,14 +234,44 @@ func MakeDeleteRule(dr strg.DeleteRule) fiber.Handler {
 		if err != nil {
 			return err
 		}
-		var in strg.Rule
-		if err = c.BodyParser(&in); err != nil {
-			return err
-		}
 		err = dr(c.Context(), id)
 		if err != nil {
 			return err
 		}
 		return c.Redirect("/rules", fiber.StatusSeeOther)
+	}
+}
+func MakeDeleteCookie(dc strg.DeleteCookie, gc strg.GetCookie) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id, err := utils.GetIntParam(c, "id")
+		if err != nil {
+			return err
+		}
+		ck, err := gc(c.Context(), id)
+		if err != nil {
+			return err
+		}
+		err = dc(c.Context(), id)
+		if err != nil {
+			return err
+		}
+		return c.Redirect(fmt.Sprintf("/cookies/%s", ck.Host), fiber.StatusSeeOther)
+	}
+}
+func MakePostCookie(sc strg.SetCookie) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id, err := utils.GetIntParam(c, "id")
+		if err != nil {
+			return err
+		}
+		var in strg.Cookie
+		if err = c.BodyParser(&in); err != nil {
+			return err
+		}
+		err = sc(c.Context(), id, in)
+		if err != nil {
+			return err
+		}
+		return c.Redirect(fmt.Sprintf("/cookie/%d", id), fiber.StatusSeeOther)
 	}
 }

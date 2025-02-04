@@ -52,3 +52,45 @@ func MakeGetCookie(db *sqlx.DB) (strg.GetCookie, error) {
 		return
 	}, nil
 }
+func MakeSetCookie(db *sqlx.DB) (strg.SetCookie, error) {
+	stmt, err := db.PrepareNamed(`
+		update moz_cookies
+		set
+			host = :host,
+			isSecure = :isSecure,
+			isHttpOnly = :isHttpOnly,
+			sameSite = :sameSite,
+			name = :name,
+			value = :value,
+			expiry = :expiry,
+			path = :path,
+			host = :host
+		where id = :id
+	`)
+	if err != nil {
+		return nil, err
+	}
+	type CookieWithId struct {
+		strg.Cookie
+		ID int64 `db:"id"`
+	}
+	return func(ctx context.Context, id int64, rule strg.Cookie) error {
+		_, err := stmt.ExecContext(ctx, CookieWithId{rule, id})
+		return err
+	}, nil
+
+}
+func MakeDeleteCookie(db *sqlx.DB) (strg.DeleteCookie, error) {
+	stmt, err := db.Prepare(`
+		delete from moz_cookies
+		where id = ?
+	`)
+	if err != nil {
+		return nil, err
+	}
+	return func(ctx context.Context, id int64) error {
+		_, err := stmt.ExecContext(ctx, id)
+		return err
+	}, nil
+
+}

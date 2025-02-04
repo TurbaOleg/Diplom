@@ -31,3 +31,7 @@ type GetCookies func(ctx context.Context, domain string) ([]ShortCookie, error)
 
 // один куки в подробностях
 type GetCookie func(ctx context.Context, id int64) (Cookie, error)
+
+type SetCookie func(ctx context.Context, id int64, c Cookie) error
+
+type DeleteCookie func(ctx context.Context, id int64) error

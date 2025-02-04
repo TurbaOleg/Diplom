@@ -1,7 +1,7 @@
 {{$root:=.}}
 	<h3>Свойства</h3>
 <div class="container m-0 p-0 overflow-scroll vh-100">
-	<form method=post action=/rules>
+	<form method=post>
 		{{with .cookie}}
 			<label class="form-label"> Name
 			<input type=text class=form-control name=name value={{.Name}} >
@@ -40,6 +40,8 @@
 				</label>
 			</div>
 		{{end}}
-		<button class="btn btn-primary mt-4" type="submit">Добавить правило</button>
-	</div>
+		<input formaction="/rules" class="btn btn-primary mt-4" type="submit" value="Добавить правило">
+		<input formaction="/cookie/{{.ID}}" class="btn btn-primary mt-4" type="submit" value="Изменить значения">
+		<input formaction="/cookie/{{.ID}}/delete" class="btn btn-danger mt-4" type="submit" value="Удалить">
+	</form>
 </div>
