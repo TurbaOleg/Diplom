@@ -1,0 +1,28 @@
+<html>
+	{{template "view/lib/head" "<title>Rule</title>"}}
+	<body>
+		<div class=container>
+			{{with .rule}}
+			<form>
+				<label class=form-label>
+					Домен
+					<input class=form-control type=text name=domain_pattern value={{.DomainPattern}}>
+				</label>
+				<label class=form-label>
+					is_secure
+					<input class=form-control type=text name=is_secure value={{.IsSecure}}>
+				</label>
+				<label class=form-label>
+					is_http_only
+					<input class=form-control type=text name=is_http_only value={{.IsHttpOnly}}>
+				</label>
+				<label class=form-label>
+					same_site
+					<input class=form-control type=text name=same_site value={{.SameSite}}>
+				</label>
+			</form>
+			{{end}}
+		</div>
+	</body>
+</html>
+

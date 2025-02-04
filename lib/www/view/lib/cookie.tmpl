@@ -1,6 +1,6 @@
 {{$root:=.}}
 <div class=container>
-	<form method=post action=/cookie/{{.ID}}>
+	<form method=post action=/rules>
 		{{with .cookie}}
 			<label class="form-label"> Имя
 			<input type=text class=form-control name=name value={{.Name}} >
@@ -39,6 +39,6 @@
 				</label>
 			</div>
 		{{end}}
-		<button class="btn btn-primary mt-4" type="submit">Применить</button>
+		<button class="btn btn-primary mt-4" type="submit">Добавить правило</button>
 	</div>
 </div>

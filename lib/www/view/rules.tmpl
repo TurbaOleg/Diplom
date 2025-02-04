@@ -1,0 +1,31 @@
+<html>
+	{{template "view/lib/head" "<title>Rules</title>"}}
+<body>
+	<div class=container>
+		{{/*<div class=list-group>
+			{{range .rules}}
+			<p class="list-group-item list-group-item-action">
+				{{.DomainPattern}}
+			</p>
+			{{end}}
+		</div>*/}}
+		<table class="table table-striped">
+			<thead>
+				<th scope=col>Домен</th>
+				<th scope=col>Только HTTPS</th>
+				<th scope=col>Запретить скрипты</th>
+				<th scope=col>SameSite</th>
+			</thead>
+
+			<tbody>
+			{{range .rules}}
+			<tr>
+				<td>{{.DomainPattern}}</td>
+				<td>{{.IsSecure}}</td>
+				<td>{{.IsHttpOnly}}</td>
+				<td>{{.SameSite}}</td>
+			</tr>
+			{{end}}
+			</tbody>
+	</div>
+</body>

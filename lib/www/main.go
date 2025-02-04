@@ -2,6 +2,7 @@ package www
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -29,6 +30,23 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	grs, err := sqlite.MakeGetRules(db)
+	if err != nil {
+		return nil, err
+	}
+	nr, err := sqlite.MakeNewRule(db)
+	if err != nil {
+		return nil, err
+
+	}
+	gr, err := sqlite.MakeGetRule(db)
+	if err != nil {
+		return nil, err
+	}
+	sr, err := sqlite.MakeSetRule(db)
+	if err != nil {
+		return nil, err
+	}
 
 	engine := html.NewFileSystem(http.FS(viewfs), ".tmpl")
 	engine.AddFunc(
@@ -41,6 +59,10 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	app := fiber.New(fiber.Config{Views: engine})
 	app.Get("/", func(c *fiber.Ctx) error { return c.RedirectToRoute("cookies", fiber.Map{}) })
 	app.Get("/cookies", MakeGetDomains(gd)).Name("cookies")
+	app.Get("/rules", MakeGetRules(grs))
+	app.Get("/rule/:id", MakeGetRule(gr))
+	app.Post("/rule/:id", MakePostRule(sr))
+	app.Post("/rules", MakePostRules(nr))
 	app.Get("/cookies/:domain", MakeGetCookies(gcc, gd))
 	app.Get("/cookie/:id", MakeGetCookie(gcc, gd, gc))
 	return app, nil
@@ -101,5 +123,58 @@ func MakeGetDomains(gd strg.GetDomains) fiber.Handler {
 			return err
 		}
 		return c.Render("view/domains", fiber.Map{"domains": domains})
+	}
+}
+func MakeGetRules(lsr strg.GetRules) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		rules, err := lsr(c.Context())
+		if err != nil {
+			return err
+		}
+		return c.Render("view/rules", fiber.Map{"rules": rules})
+	}
+}
+func MakeGetRule(gr strg.GetRule) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id, err := utils.GetIntParam(c, "id")
+		if err != nil {
+			return err
+		}
+		rule, err := gr(c.Context(), id)
+		if err != nil {
+			return err
+		}
+		return c.Render("view/rule", fiber.Map{"rule": rule})
+	}
+}
+func MakePostRule(sr strg.SetRule) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id, err := utils.GetIntParam(c, "id")
+		if err != nil {
+			return err
+		}
+		var in strg.Rule
+		if err = c.BodyParser(&in); err != nil {
+			return err
+		}
+		err = sr(c.Context(), id, in)
+		if err != nil {
+			return err
+		}
+		// return c.Render("view/rule", fiber.Map{"rule": in})
+		return c.Redirect(fmt.Sprintf("/rule/%d", id))
+	}
+}
+func MakePostRules(nr strg.NewRule) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		var in strg.Rule
+		if err := c.BodyParser(&in); err != nil {
+			return err
+		}
+		id, err := nr(c.Context(), in)
+		if err != nil {
+			return err
+		}
+		return c.Redirect(fmt.Sprintf("/rule/%d", id))
 	}
 }
