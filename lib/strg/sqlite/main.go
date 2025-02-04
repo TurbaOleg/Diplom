@@ -12,7 +12,7 @@ import (
 func MakeGetCookies(db *sqlx.DB) (strg.GetCookies, error) {
 	stmt, err := db.Preparex(`
 		select
-		id, name
+		id, name, value like 'true' as is_xss
 		from moz_cookies where host = ?`)
 	if err != nil {
 		return nil, err
@@ -27,13 +27,12 @@ func MakeGetCookies(db *sqlx.DB) (strg.GetCookies, error) {
 }
 func MakeGetDomains(db *sqlx.DB) (strg.GetDomains, error) {
 	stmt, err := db.Preparex(`
-		select distinct (host)
-		host
+		select distinct (host) host, max(value like 'true') OVER (partition by host) as is_xss
 		from moz_cookies`)
 	if err != nil {
 		return nil, err
 	}
-	return func(ctx context.Context) (out []string, err error) {
+	return func(ctx context.Context) (out []strg.Domain, err error) {
 		err = stmt.SelectContext(ctx, &out)
 		return
 	}, nil
