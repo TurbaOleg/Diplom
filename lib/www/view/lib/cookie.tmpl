@@ -15,9 +15,11 @@
 			<label class="form-label"> Expire
 			<input type=number class=form-control name=expiry value={{.Expiry}} >
 			</label>
-			<label class="form-label"> Value
-			<input type=text class=form-control name=value value={{.Value}} >
+			<div>
+			<label for=value class="form-label"> Value
 			</label>
+				<textarea style=-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;width:100% type=text class=form-control name=value>{{.Value}}</textarea>
+			</div>
 		{{end}}
 			<div>
 			<label class="form-label"> SameSite
