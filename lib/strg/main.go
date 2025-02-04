@@ -3,15 +3,15 @@ package strg
 import "context"
 
 type Cookie struct {
-	Value      string `db:"value"`
-	Name       string `db:"name"`
-	Host       string `db:"host"`
-	Path       string `db:"path"`
-	Expiry     int64  `db:"expiry"`
-	IsSecure   bool   `db:"isSecure"`
-	IsHttpOnly bool   `db:"isHttpOnly"`
-	SameSite   int64  `db:"sameSite"`
-	IsXSS      bool   `db:"is_xss"`
+	Value      string `db:"value" form:"value"`
+	Name       string `db:"name" form:"name"`
+	Host       string `db:"host" form:"host"`
+	Path       string `db:"path" form:"path"`
+	Expiry     int64  `db:"expiry" form:"expiry"`
+	IsSecure   bool   `db:"isSecure" form:"is_secure"`
+	IsHttpOnly bool   `db:"isHttpOnly" form:"is_http_only"`
+	SameSite   int64  `db:"sameSite" form:"same_site"`
+	IsXSS      bool   `db:"is_xss" form:"is_xss"`
 }
 type ShortCookie struct {
 	ID    int64  `db:"id"`

@@ -1,10 +1,17 @@
 {{$root := .}}
 <div class="container m-0 p-0 overflow-scroll" style=height:100vh>
-	<h3>Cookies</h3>
+	<div class=d-flex>
+		<h3 class=m-2>Cookies</h3>
+		<button class="btn btn-danger m-2">Удалить все</button>
+	</div>
 <div class="list-group p-0 m-0">
 	{{range .items}}
 	{{$i := .}}
-	<a href=/cookie/{{.ID}} style=white-space:normal;overflow:hidden;text-overflow:ellipsis class="list-group-item list-group-item-action {{if .IsXSS}} text-danger {{end}} {{with $root.current}} {{if eq . $i.ID }} bg-primary-subtle {{end}} {{end}}">
+	<a href=/cookie/{{.ID}}
+	style=white-space:normal;overflow:hidden;text-overflow:ellipsis
+	class="list-group-item list-group-item-action
+	{{if .IsXSS}} text-danger {{end}}
+	{{with $root.current}} {{if eq . $i.ID }} bg-primary-subtle {{end}} {{end}}">
 		{{.Name}}
 	</a>
 	{{end}}

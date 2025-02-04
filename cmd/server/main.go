@@ -29,6 +29,7 @@ func f() error {
 			return errors.Join(err)
 		}
 	}
+	fmt.Printf("connstr: %v\n", connstr)
 
 	db, err := initDB(connstr)
 	if err != nil {

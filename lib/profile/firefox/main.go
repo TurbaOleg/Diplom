@@ -1,8 +1,7 @@
 package firefox
 
 import (
-	"fmt"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/adrg/xdg"
@@ -11,7 +10,7 @@ import (
 )
 
 func GetWindowsDbConnectionPath() (string, error) {
-	p, err := xdg.SearchDataFile("Firefox/profiles.ini")
+	p, err := xdg.SearchDataFile("Mozilla/Firefox/profiles.ini")
 	if err != nil {
 		return "", err
 	}
@@ -21,11 +20,15 @@ func GetWindowsDbConnectionPath() (string, error) {
 	}
 	// var dprofile string
 	for _, sec := range tree.Sections() {
-		if !strings.HasPrefix(sec.Name(), "Profile") {
+		if !strings.HasPrefix(sec.Name(), "Install") {
 			continue
 		}
-		if sec.Key("Default").Value() == "1" {
-			return fmt.Sprintf("%s/Profiles/%s", path.Dir(p)+sec.Key("Path").String()), nil
+		if sec.HasKey("Default") {
+			return filepath.Join(
+				filepath.Dir(p),
+				"Profiles",
+				sec.Key("Default").Value(),
+				"cookies.sqlite"), nil
 		}
 	}
 	return "", fiber.ErrNotFound

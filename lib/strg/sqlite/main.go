@@ -32,7 +32,8 @@ func InitDB(db *sqlx.DB) (err error) {
 func MakeGetCookies(db *sqlx.DB) (strg.GetCookies, error) {
 	stmt, err := db.Preparex(`
 		select
-		id, name, value like 'true' as is_xss
+		id, name,
+		value like '%x3c%' or value like '%<script>%' as is_xss
 		from moz_cookies where host = ?
 		order by is_xss desc`)
 	if err != nil {
@@ -48,7 +49,9 @@ func MakeGetCookies(db *sqlx.DB) (strg.GetCookies, error) {
 }
 func MakeGetDomains(db *sqlx.DB) (strg.GetDomains, error) {
 	stmt, err := db.Preparex(`
-		select distinct (host) host, max(value like 'true') OVER (partition by host) as is_xss
+		select distinct (host) host, max(
+			value like '%x3c%script%' or value like '%<%script%>%'
+		) OVER (partition by host) as is_xss
 		from moz_cookies
 		order by is_xss desc`)
 	if err != nil {
