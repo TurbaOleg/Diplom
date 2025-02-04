@@ -3,19 +3,19 @@
 <div class="container m-0 p-0 overflow-scroll vh-100">
 	<form method=post action=/rules>
 		{{with .cookie}}
-			<label class="form-label"> Имя
+			<label class="form-label"> Name
 			<input type=text class=form-control name=name value={{.Name}} >
 			</label>
-			<label class="form-label"> Домен
+			<label class="form-label"> Domain
 			<input type=text class=form-control name=host value={{.Host}} >
 			</label>
-			<label class="form-label"> Путь
+			<label class="form-label"> Path
 			<input type=text class=form-control name=path value={{.Path}} >
 			</label>
-			<label class="form-label"> Срок годности, с.
+			<label class="form-label"> Expire
 			<input type=number class=form-control name=expiry value={{.Expiry}} >
 			</label>
-			<label class="form-label"> Значение
+			<label class="form-label"> Value
 			<input type=text class=form-control name=value value={{.Value}} >
 			</label>
 		{{end}}
@@ -31,12 +31,12 @@
 		{{with .cookie}}
 			<div>
 				<input type=checkbox class=form-check-input name=is_secure {{if .IsSecure}} checked {{end}} >
-				<label class="form-check-label"> Только зашифрованные соединения
+				<label class="form-check-label">IsSecure
 				</label>
 			</div>
 			<div>
 				<input type=checkbox class=form-check-input name=is_http_only {{if .IsHttpOnly}} checked {{end}} >
-				<label class="form-check-label"> Запретить доступ клиентским скриптам
+				<label class="form-check-label">HttpOnly
 				</label>
 			</div>
 		{{end}}

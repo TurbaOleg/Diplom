@@ -7,7 +7,7 @@
 			<form method=post action=/rule/{{.rule.ID}}>
 				<div>
 					<label class=form-label>
-						Домен
+						Domain
 						<input class=form-control type=text name=host value={{.rule.DomainPattern}}>
 					</label>
 				</div>
@@ -27,12 +27,12 @@
 			{{with .rule}}
 				<div>
 					<input type=checkbox class=form-check-input name=is_secure {{if .IsSecure}} checked {{end}} >
-					<label class="form-check-label"> Только зашифрованные соединения
+					<label class="form-check-label"> IsSecure
 					</label>
 				</div>
 				<div>
 					<input type=checkbox class=form-check-input name=is_http_only {{if .IsHttpOnly}} checked {{end}} >
-					<label class="form-check-label"> Запретить доступ клиентским скриптам
+					<label class="form-check-label"> HttpOnly
 					</label>
 				</div>
 				<button class="btn btn-primary mt-4" type="submit">Применить</button>
