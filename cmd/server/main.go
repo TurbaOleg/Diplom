@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"codeberg.org/shinyzero0/oleg-soul-2024/lib/utils"
 	"codeberg.org/shinyzero0/oleg-soul-2024/lib/www"
 	"github.com/jmoiron/sqlx"
+	"github.com/skratchdot/open-golang/open"
 )
 
 func main() {
@@ -31,6 +33,10 @@ func f() error {
 	if err != nil {
 		return err
 	}
+	go func() {
+		time.Sleep(time.Second)
+		open.Start("http://localhost:8000")
+	}()
 	return app.Listen(":8000")
 
 }
