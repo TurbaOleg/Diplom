@@ -39,7 +39,8 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	)
 
 	app := fiber.New(fiber.Config{Views: engine})
-	app.Get("/domains", MakeGetDomains(gd))
+	app.Get("/", func(c *fiber.Ctx) error { return c.RedirectToRoute("cookies", fiber.Map{}) })
+	app.Get("/cookies", MakeGetDomains(gd)).Name("cookies")
 	app.Get("/cookies/:domain", MakeGetCookies(gcc, gd))
 	app.Get("/cookie/:id", MakeGetCookie(gcc, gd, gc))
 	return app, nil
