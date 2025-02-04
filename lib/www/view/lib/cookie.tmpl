@@ -1,0 +1,44 @@
+<div class=container>
+	<form method=post action=/cookie/{{.ID}}>
+		{{with .cookie}}
+			<label class="form-label"> Имя
+			<input type=text class=form-control name=name value={{.Name}} >
+			</label>
+			<label class="form-label"> Домен
+			<input type=text class=form-control name=host value={{.Host}} >
+			</label>
+			<label class="form-label"> Путь
+			<input type=text class=form-control name=path value={{.Path}} >
+			</label>
+			<label class="form-label"> Срок годности, с.
+			<input type=number class=form-control name=expiry value={{.Expiry}} >
+			</label>
+			<label class="form-label"> Значение
+			<input type=text class=form-control name=value value={{.Value}} >
+			</label>
+		{{end}}
+			<div>
+			<label class="form-label"> SameSite
+		{{$root:=.}}
+			<select class=form-select name=same_site>
+				{{range $k, $v := .samesite}}
+				<option value={{$k}} {{if eq $k $root.cookie.SameSite}} selected {{end}}>{{$v}}</option>
+				{{end}}
+			</select>
+			</label>
+			</div>
+		{{with .cookie}}
+			<div>
+			<input type=checkbox class=form-check-input name=is_secure value={{.IsSecure}} >
+			<label class="form-check-label"> Только зашифрованные соединения
+			</label>
+			</div>
+			<div>
+			<input type=checkbox class=form-check-input name=is_http_only value={{.IsHttpOnly}} >
+			<label class="form-check-label"> Запретить доступ клиентским скриптам
+			</label>
+			</div>
+		{{end}}
+		<button class="btn btn-primary mt-4" type="submit">Применить</button>
+	</div>
+</div>

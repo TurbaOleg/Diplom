@@ -1,0 +1,53 @@
+package sqlite
+
+import (
+	"context"
+	"fmt"
+
+	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
+	"github.com/jmoiron/sqlx"
+	_ "modernc.org/sqlite"
+)
+
+func MakeGetCookies(db *sqlx.DB) (strg.GetCookies, error) {
+	stmt, err := db.Preparex(`
+		select
+		id, name
+		from moz_cookies where host = ?`)
+	if err != nil {
+		return nil, err
+	}
+	return func(ctx context.Context, domain string) (out []strg.ShortCookie, err error) {
+		if false {
+			fmt.Println(domain)
+		}
+		err = stmt.SelectContext(ctx, &out, domain)
+		return
+	}, nil
+}
+func MakeGetDomains(db *sqlx.DB) (strg.GetDomains, error) {
+	stmt, err := db.Preparex(`
+		select distinct (host)
+		host
+		from moz_cookies`)
+	if err != nil {
+		return nil, err
+	}
+	return func(ctx context.Context) (out []string, err error) {
+		err = stmt.SelectContext(ctx, &out)
+		return
+	}, nil
+}
+func MakeGetCookie(db *sqlx.DB) (strg.GetCookie, error) {
+	stmt, err := db.Preparex(`
+		select
+		host, value, name, path, expiry, isSecure, isHttpOnly, sameSite
+		from moz_cookies where id = ? limit 1`)
+	if err != nil {
+		return nil, err
+	}
+	return func(ctx context.Context, id int64) (out strg.Cookie, err error) {
+		err = stmt.GetContext(ctx, &out, id)
+		return
+	}, nil
+}

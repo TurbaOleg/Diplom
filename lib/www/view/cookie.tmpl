@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	{{template "view/lib/head" "<title>Cookie</title>"}}
+<body>
+<div class=container>
+	<div class=row>
+		<div class=col-4>
+		{{template "view/lib/domains" .domains}}
+		</div>
+
+		<div class=col-2>
+		{{template "view/lib/cookies" .cookies}}
+		</div>
+
+		<div class=col-6>
+		{{template "view/lib/cookie" .}}
+		</div>
+	</div>
+</div>
+</body>
+</html>
