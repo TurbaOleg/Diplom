@@ -100,8 +100,14 @@ func MakeGetCookie(gcc strg.GetCookies, gd strg.GetDomains, gc strg.GetCookie) f
 		}
 		return c.Render("view/cookie",
 			fiber.Map{
-				"cookies":  cookies,
-				"domains":  domains,
+				"cookies": fiber.Map{
+					"items":   cookies,
+					"current": id,
+				},
+				"domains": fiber.Map{
+					"items":   domains,
+					"current": cookie.Host,
+				},
 				"cookie":   cookie,
 				"ID":       id,
 				"domain":   cookie.Host,
@@ -122,9 +128,14 @@ func MakeGetCookies(gc strg.GetCookies, gd strg.GetDomains) fiber.Handler {
 		}
 		return c.Render("view/cookies",
 			fiber.Map{
-				"cookies": cookies,
-				"domains": domains,
-				"domain":  domain})
+				"cookies": fiber.Map{
+					"items": cookies,
+				},
+				"domains": fiber.Map{
+					"items":   domains,
+					"current": domain,
+				},
+			})
 	}
 }
 func MakeGetDomains(gd strg.GetDomains) fiber.Handler {
@@ -133,7 +144,10 @@ func MakeGetDomains(gd strg.GetDomains) fiber.Handler {
 		if err != nil {
 			return err
 		}
-		return c.Render("view/domains", fiber.Map{"domains": domains})
+		return c.Render("view/domains", fiber.Map{"domains": fiber.Map{
+			"items": domains,
+		},
+		})
 	}
 }
 func MakeGetRules(lsr strg.GetRules) fiber.Handler {
