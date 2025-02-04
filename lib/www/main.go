@@ -22,6 +22,11 @@ var SAMESITE = map[int64]string{
 	0: "Нет", 1: "Lax", 2: "Strict"}
 
 func MakeApp(db *sqlx.DB) (*fiber.App, error) {
+	var err error
+	err = sqlite.InitDB(db)
+	if err != nil {
+		return nil, err
+	}
 	gcc, err := sqlite.MakeGetCookies(db)
 	if err != nil {
 		return nil, err
@@ -195,7 +200,6 @@ func MakePostRule(sr strg.SetRule) fiber.Handler {
 		if err = c.BodyParser(&in); err != nil {
 			return err
 		}
-		fmt.Printf("in: %v\n", in)
 		err = sr(c.Context(), id, in)
 		if err != nil {
 			return err

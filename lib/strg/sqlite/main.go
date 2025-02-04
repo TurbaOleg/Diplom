@@ -6,9 +6,29 @@ import (
 
 	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
 	"github.com/jmoiron/sqlx"
+
+	_ "embed"
 	_ "modernc.org/sqlite"
 )
 
+//go:embed init.sql
+var initstmt string
+
+func InitDB(db *sqlx.DB) (err error) {
+	var cnt int
+	err = db.Get(&cnt,
+		`SELECT count(*) FROM sqlite_master WHERE type='table' AND name='rules';`,
+	)
+	if err != nil {
+		return err
+	}
+	if cnt == 0 {
+		_, err = db.Exec(initstmt)
+		return err
+	} else {
+		return nil
+	}
+}
 func MakeGetCookies(db *sqlx.DB) (strg.GetCookies, error) {
 	stmt, err := db.Preparex(`
 		select
