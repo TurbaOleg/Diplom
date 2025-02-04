@@ -4,15 +4,15 @@
 <body>
 <div class=container>
 	<div class=row>
-		<div class=col-4>
+		<div class="col-3 overflow-scroll" style=height:100vh>
 		{{template "view/lib/domains" .domains}}
 		</div>
 
-		<div class=col-2>
+		<div class="col-4 overflow-scroll" style=height:100vh>
 		{{template "view/lib/cookies" .cookies}}
 		</div>
 
-		<div class=col-6>
+		<div class="col-5 overflow-scroll" style=height:100vh>
 		{{template "view/lib/cookie" .}}
 		</div>
 	</div>
