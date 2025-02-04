@@ -8,8 +8,9 @@ import (
 )
 
 func MakeGetRules(db *sqlx.DB) (strg.GetRules, error) {
-	stmt, err := db.Preparex(
-		`select domain_pattern, is_secure, is_http_only, same_site from rules`)
+	stmt, err := db.Preparex(`
+		select id, domain_pattern, is_secure, is_http_only, same_site from rules
+	`)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +21,7 @@ func MakeGetRules(db *sqlx.DB) (strg.GetRules, error) {
 }
 func MakeGetRule(db *sqlx.DB) (strg.GetRule, error) {
 	stmt, err := db.Preparex(
-		`select domain_pattern, is_secure, is_http_only, same_site from rules where id = ?`)
+		`select id, domain_pattern, is_secure, is_http_only, same_site from rules where id = ?`)
 	if err != nil {
 		return nil, err
 	}
@@ -49,11 +50,12 @@ func MakeNewRule(db *sqlx.DB) (strg.NewRule, error) {
 func MakeSetRule(db *sqlx.DB) (strg.SetRule, error) {
 	stmt, err := db.PrepareNamed(`
 		update rules
-		set domain_pattern = :domain_pattern,
-		set is_secure = :is_secure,
-		set is_http_only = :is_http_only,
-		set same_site = :same_site
-		where id = ?
+		set
+			domain_pattern = :domain_pattern,
+			is_secure = :is_secure,
+			is_http_only = :is_http_only,
+			same_site = :same_site
+		where id = :id
 	`)
 	if err != nil {
 		return nil, err
@@ -64,6 +66,20 @@ func MakeSetRule(db *sqlx.DB) (strg.SetRule, error) {
 	}
 	return func(ctx context.Context, id int64, rule strg.Rule) error {
 		_, err := stmt.ExecContext(ctx, RuleWithId{rule, id})
+		return err
+	}, nil
+
+}
+func MakeDeleteRule(db *sqlx.DB) (strg.DeleteRule, error) {
+	stmt, err := db.Prepare(`
+		delete from rules
+		where id = ?
+	`)
+	if err != nil {
+		return nil, err
+	}
+	return func(ctx context.Context, id int64) error {
+		_, err := stmt.ExecContext(ctx, id)
 		return err
 	}, nil
 

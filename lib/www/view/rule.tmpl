@@ -1,25 +1,41 @@
+{{$root:=.}}
 <html>
 	{{template "view/lib/head" "<title>Rule</title>"}}
 	<body>
+	{{template "view/lib/header" "rules"}}
 		<div class=container>
+			<form method=post action=/rule/{{.rule.ID}}>
+				<div>
+					<label class=form-label>
+						Домен
+						<input class=form-control type=text name=host value={{.rule.DomainPattern}}>
+					</label>
+				</div>
+				<div>
+					<label class="form-label"> SameSite
+						<select class=form-select name=same_site>
+							{{range $k, $v := .samesite}}
+							<option
+								value={{$k}}
+								{{if eq $k $root.rule.SameSite}} selected {{end}}>
+								{{$v}}
+							</option>
+							{{end}}
+						</select>
+					</label>
+				</div>
 			{{with .rule}}
-			<form>
-				<label class=form-label>
-					Домен
-					<input class=form-control type=text name=domain_pattern value={{.DomainPattern}}>
-				</label>
-				<label class=form-label>
-					is_secure
-					<input class=form-control type=text name=is_secure value={{.IsSecure}}>
-				</label>
-				<label class=form-label>
-					is_http_only
-					<input class=form-control type=text name=is_http_only value={{.IsHttpOnly}}>
-				</label>
-				<label class=form-label>
-					same_site
-					<input class=form-control type=text name=same_site value={{.SameSite}}>
-				</label>
+				<div>
+					<input type=checkbox class=form-check-input name=is_secure {{if .IsSecure}} checked {{end}} >
+					<label class="form-check-label"> Только зашифрованные соединения
+					</label>
+				</div>
+				<div>
+					<input type=checkbox class=form-check-input name=is_http_only {{if .IsHttpOnly}} checked {{end}} >
+					<label class="form-check-label"> Запретить доступ клиентским скриптам
+					</label>
+				</div>
+				<button class="btn btn-primary mt-4" type="submit">Применить</button>
 			</form>
 			{{end}}
 		</div>

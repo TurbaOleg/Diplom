@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"codeberg.org/shinyzero0/oleg-soul-2024/lib/rules"
 	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
 	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg/sqlite"
 	"codeberg.org/shinyzero0/oleg-soul-2024/lib/utils"
@@ -16,6 +17,9 @@ import (
 
 //go:embed view/*
 var viewfs embed.FS
+
+var SAMESITE = map[int64]string{
+	0: "Нет", 1: "Lax", 2: "Strict"}
 
 func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	gcc, err := sqlite.MakeGetCookies(db)
@@ -43,10 +47,15 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	dr, err := sqlite.MakeDeleteRule(db)
+	if err != nil {
+		return nil, err
+	}
 	sr, err := sqlite.MakeSetRule(db)
 	if err != nil {
 		return nil, err
 	}
+	ar := rules.MakeApplyRules(db)
 
 	engine := html.NewFileSystem(http.FS(viewfs), ".tmpl")
 	engine.AddFunc(
@@ -59,12 +68,15 @@ func MakeApp(db *sqlx.DB) (*fiber.App, error) {
 	app := fiber.New(fiber.Config{Views: engine})
 	app.Get("/", func(c *fiber.Ctx) error { return c.RedirectToRoute("cookies", fiber.Map{}) })
 	app.Get("/cookies", MakeGetDomains(gd)).Name("cookies")
-	app.Get("/rules", MakeGetRules(grs))
-	app.Get("/rule/:id", MakeGetRule(gr))
-	app.Post("/rule/:id", MakePostRule(sr))
-	app.Post("/rules", MakePostRules(nr))
 	app.Get("/cookies/:domain", MakeGetCookies(gcc, gd))
 	app.Get("/cookie/:id", MakeGetCookie(gcc, gd, gc))
+
+	app.Get("/rules", MakeGetRules(grs))
+	app.Post("/rules", MakePostRules(nr))
+	app.Post("/rules/apply", MakeApplyRules(ar, grs))
+	app.Get("/rule/:id", MakeGetRule(gr))
+	app.Post("/rule/:id", MakePostRule(sr))
+	app.Post("/rule/:id/delete", MakeDeleteRule(dr))
 	return app, nil
 }
 
@@ -88,13 +100,12 @@ func MakeGetCookie(gcc strg.GetCookies, gd strg.GetDomains, gc strg.GetCookie) f
 		}
 		return c.Render("view/cookie",
 			fiber.Map{
-				"cookies": cookies,
-				"domains": domains,
-				"cookie":  cookie,
-				"ID":      id,
-				"domain":  cookie.Host,
-				"samesite": map[int64]string{
-					0: "Нет", 1: "Lax", 2: "Strict"},
+				"cookies":  cookies,
+				"domains":  domains,
+				"cookie":   cookie,
+				"ID":       id,
+				"domain":   cookie.Host,
+				"samesite": SAMESITE,
 			})
 	}
 }
@@ -144,7 +155,10 @@ func MakeGetRule(gr strg.GetRule) fiber.Handler {
 		if err != nil {
 			return err
 		}
-		return c.Render("view/rule", fiber.Map{"rule": rule})
+		return c.Render("view/rule", fiber.Map{
+			"rule":     rule,
+			"samesite": SAMESITE,
+		})
 	}
 }
 func MakePostRule(sr strg.SetRule) fiber.Handler {
@@ -157,12 +171,24 @@ func MakePostRule(sr strg.SetRule) fiber.Handler {
 		if err = c.BodyParser(&in); err != nil {
 			return err
 		}
+		fmt.Printf("in: %v\n", in)
 		err = sr(c.Context(), id, in)
 		if err != nil {
 			return err
 		}
-		// return c.Render("view/rule", fiber.Map{"rule": in})
 		return c.Redirect(fmt.Sprintf("/rule/%d", id))
+	}
+}
+func MakeApplyRules(ar rules.ApplyRules, grs strg.GetRules) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		rs, err := grs(c.Context())
+		if err != nil {
+			return err
+		}
+		if err := ar(c.Context(), rs); err != nil {
+			return err
+		}
+		return c.Redirect("/rules", fiber.StatusSeeOther)
 	}
 }
 func MakePostRules(nr strg.NewRule) fiber.Handler {
@@ -176,5 +202,22 @@ func MakePostRules(nr strg.NewRule) fiber.Handler {
 			return err
 		}
 		return c.Redirect(fmt.Sprintf("/rule/%d", id))
+	}
+}
+func MakeDeleteRule(dr strg.DeleteRule) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		id, err := utils.GetIntParam(c, "id")
+		if err != nil {
+			return err
+		}
+		var in strg.Rule
+		if err = c.BodyParser(&in); err != nil {
+			return err
+		}
+		err = dr(c.Context(), id)
+		if err != nil {
+			return err
+		}
+		return c.Redirect("/rules", fiber.StatusSeeOther)
 	}
 }

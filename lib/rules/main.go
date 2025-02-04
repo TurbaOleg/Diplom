@@ -21,8 +21,8 @@ func MakeApplyRules(db *sqlx.DB) ApplyRules {
 			_, err := tx.ExecContext(ctx,
 				`update moz_cookies
 				set isSecure = ?,
-				set isHttpOnly = ?,
-				set sameSite = ?,
+					isHttpOnly = ?,
+					sameSite = ?
 				where host like ?`, rule.IsSecure, rule.IsHttpOnly, rule.SameSite, rule.DomainPattern)
 			if err != nil {
 				return err
