@@ -3,7 +3,7 @@ package sqlite
 import (
 	"context"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
+	"github.com/TurbaOleg/Diplom/lib/strg"
 	"github.com/jmoiron/sqlx"
 )
 

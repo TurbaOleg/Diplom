@@ -1,4 +1,4 @@
-module codeberg.org/shinyzero0/oleg-soul-2024
+module github.com/TurbaOleg/Diplom
 
 go 1.23.0
 
@@ -7,10 +7,12 @@ require github.com/jmoiron/sqlx v1.4.0
 require (
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/gofiber/template/html/v2 v2.1.2
+	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	modernc.org/sqlite v1.34.2
 )
 
 require (
+	github.com/adrg/xdg v0.5.3 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/gofiber/template v1.8.3 // indirect
@@ -27,7 +29,8 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.26.0 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect
 	modernc.org/libc v1.55.3 // indirect
 	modernc.org/mathutil v1.6.0 // indirect

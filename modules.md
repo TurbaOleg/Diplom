@@ -104,7 +104,7 @@ package rules
 import (
 	"context"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
+	"github.com/TurbaOleg/Diplom/lib/strg"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -144,7 +144,7 @@ import (
 	"context"
 	"fmt"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
+	"github.com/TurbaOleg/Diplom/lib/strg"
 	"github.com/jmoiron/sqlx"
 
 	_ "modernc.org/sqlite"
@@ -198,7 +198,7 @@ package sqlite
 import (
 	"context"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
+	"github.com/TurbaOleg/Diplom/lib/strg"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -293,10 +293,10 @@ import (
 	"html/template"
 	"net/http"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/rules"
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg"
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/strg/sqlite"
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/utils"
+	"github.com/TurbaOleg/Diplom/lib/rules"
+	"github.com/TurbaOleg/Diplom/lib/strg"
+	"github.com/TurbaOleg/Diplom/lib/strg/sqlite"
+	"github.com/TurbaOleg/Diplom/lib/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/jmoiron/sqlx"
@@ -520,8 +520,8 @@ import (
 	"os"
 	"time"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/utils"
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/www"
+	"github.com/TurbaOleg/Diplom/lib/utils"
+	"github.com/TurbaOleg/Diplom/lib/www"
 	"github.com/jmoiron/sqlx"
 	"github.com/skratchdot/open-golang/open"
 )

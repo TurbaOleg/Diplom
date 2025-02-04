@@ -1,12 +1,14 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"time"
 
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/utils"
-	"codeberg.org/shinyzero0/oleg-soul-2024/lib/www"
+	"github.com/TurbaOleg/Diplom/lib/profile/firefox"
+	"github.com/TurbaOleg/Diplom/lib/utils"
+	"github.com/TurbaOleg/Diplom/lib/www"
 	"github.com/jmoiron/sqlx"
 	"github.com/skratchdot/open-golang/open"
 )
@@ -19,13 +21,16 @@ func main() {
 }
 
 func f() error {
+	var connstr string
 	connstr, err := utils.GetEnv("DB_CONNECTION")
 	if err != nil {
-		return err
+		connstr, err = firefox.GetWindowsDbConnectionPath()
+		if err != nil {
+			return errors.Join(err)
+		}
 	}
 
 	db, err := initDB(connstr)
-	// db.MapperFunc(strings.ToLower)
 	if err != nil {
 		return err
 	}
